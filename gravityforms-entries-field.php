@@ -11,6 +11,8 @@
  * License: GNU General Public License, version 3, http://www.gnu.org/licenses/gpl-3.0.en.html
  */
 
+use GF_Fields;
+
 if ( !defined( 'WPINC' ) )
 {
 	// Exit if accessed directly
@@ -92,6 +94,19 @@ class Plugin extends Singular
 
 		// plugin loaded hook
 		do_action_ref_array( 'gfef_loaded', [ &$this ] );
+
+		// GravityForm loaded hook
+		add_action( 'gform_loaded', [ &$this, 'register_field' ] );
+	}
+
+	/**
+	 * Registers the custom field type
+	 *
+	 * @return void
+	 */
+	public function register_field()
+	{
+		GF_Fields::register( new GF_Field_Form_Entries() );
 	}
 
 	/**
@@ -188,4 +203,4 @@ class Plugin extends Singular
 }
 
 // boot up the system
-wp_plugin_boilerplate();
+gf_form_entries_field();

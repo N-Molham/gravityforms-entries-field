@@ -9,13 +9,13 @@
 
 use TeamYea\Gravity_Forms\Form_Entries_Field\Plugin;
 
-if ( !function_exists( 'wp_plugin_boilerplate' ) ):
+if ( !function_exists( 'gf_form_entries_field' ) ):
 	/**
 	 * Get plugin instance
 	 *
 	 * @return Plugin
 	 */
-	function wp_plugin_boilerplate()
+	function gf_form_entries_field()
 	{
 		return Plugin::get_instance();
 	}
@@ -39,7 +39,7 @@ if ( !function_exists( 'gfef_view' ) ):
 			ob_start();
 		}
 
-		wp_plugin_boilerplate()->load_view( $view_name, $args );
+		gf_form_entries_field()->load_view( $view_name, $args );
 
 		if ( $return )
 		{
@@ -57,6 +57,6 @@ if ( !function_exists( 'gfef_version' ) ):
 	 */
 	function gfef_version()
 	{
-		return wp_plugin_boilerplate()->version;
+		return gf_form_entries_field()->version;
 	}
 endif;

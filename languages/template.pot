@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Gravity Forms Entries Field 1.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/gravityforms-entries-field\n"
-"POT-Creation-Date: 2016-09-22 12:24:51+00:00\n"
+"POT-Creation-Date: 2016-09-22 18:59:27+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,8 +25,36 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: gravityforms-entries-field.php:113
+#: gravityforms-entries-field.php:128
 msgid "Template <code>%s</code> File not found, calculated path: <code>%s</code>"
+msgstr ""
+
+#: includes/classes/Backend.php:61
+msgid "<h6>Form</h6>Which form to load entries?"
+msgstr ""
+
+#: includes/classes/Backend.php:62
+msgid "<h6>Form Field</h6>Which form field use in the dropdown menu options?"
+msgstr ""
+
+#: includes/classes/GF_Field_Form_Entries.php:24
+msgid "Form Entries"
+msgstr ""
+
+#: includes/classes/GF_Field_Form_Entries.php:158
+msgid "Invalid Entry Selection!"
+msgstr ""
+
+#: includes/classes/GF_Field_Form_Entries.php:170
+msgid "Selected entry not found!"
+msgstr ""
+
+#: views/settings/form_field.php:11
+msgid "Form"
+msgstr ""
+
+#: views/settings/form_field.php:24
+msgid "Form Field"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

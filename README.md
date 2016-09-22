@@ -1,2 +1,2 @@
-# wp-plugins-boilerplate
-My WordPress plugin boilerplate
+# Gravity Forms Entries Field
+Add custom field type of entries from another forms

@@ -8,7 +8,8 @@ var plugin_args = {
 	domainPath: '/languages', // language files location ( relative to "path" )
 	potFilename: 'template.pot', // generated pot file name
 	exclude: [ // excluded files and directory from parsing
-		'vendor/' // composer libs vendor dir
+		'vendor/', // composer libs vendor dir
+		'.git'
 	],
 	mainFile: 'gravityforms-entries-field.php', // plugin main file ( with plugin description comment doc )
 	watchFiles: {

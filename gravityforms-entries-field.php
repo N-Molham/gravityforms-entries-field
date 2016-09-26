@@ -3,10 +3,12 @@
 /**
  * Plugin Name: Gravity Forms Entries Field
  * Description: Add custom field type of entries from another forms
- * Version: 1.0.0
+ * Version: 1.0.3
  * Author: Nabeel Molham
  * Author URI: http://nabeel.molham.me/
  * Text Domain: gf-entries-field
+ * GitHub Plugin URI: https://github.com/N-Molham/gravityforms-entries-field
+ * GitHub Branch: master
  * Domain Path: /languages
  * License: GNU General Public License, version 3, http://www.gnu.org/licenses/gpl-3.0.en.html
  */

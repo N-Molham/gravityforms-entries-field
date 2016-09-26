@@ -85,13 +85,12 @@ class GF_Field_Form_Entries extends GF_Field_Select
 
 	public function get_field_input( $form, $value = '', $entry = null )
 	{
-		$form_id         = absint( $form['id'] );
-		$is_entry_detail = $this->is_entry_detail();
-		$is_form_editor  = $this->is_form_editor();
-
-		$id       = $this->id;
-		$field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
-
+		// vars
+		$form_id            = absint( $form['id'] );
+		$is_entry_detail    = $this->is_entry_detail();
+		$is_form_editor     = $this->is_form_editor();
+		$id                 = $this->id;
+		$field_id           = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
 		$logic_event        = $this->get_conditional_logic_event( 'change' );
 		$size               = $this->size;
 		$class_suffix       = $is_entry_detail ? '_admin' : '';
@@ -174,5 +173,24 @@ class GF_Field_Form_Entries extends GF_Field_Select
 	public function allow_html()
 	{
 		return false;
+	}
+
+	public function get_form_inline_script_on_page_render( $form )
+	{
+		// vars
+		$form_id         = absint( $form['id'] );
+		$is_entry_detail = $this->is_entry_detail();
+		$is_form_editor  = $this->is_form_editor();
+		$id              = $this->id;
+		$field_id        = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
+
+		// Select2 assets
+		wp_enqueue_style( 'select2-style', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css', null, '4.0.3' );
+		wp_enqueue_script( 'select2-script', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', [ 'jquery' ], '4.0.3', true );
+
+		$script = parent::get_form_inline_script_on_page_render( $form );
+		$script .= 'jQuery( function( $ ) { $( "#'. $field_id .'" ).select2(); } );';
+
+		return $script;
 	}
 }

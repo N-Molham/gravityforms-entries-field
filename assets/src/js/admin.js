@@ -54,6 +54,10 @@
 				};
 			})( selected_form ) ).removeClass( 'disabled' );
 
+			// auto-select first option
+			$fields_dropdown.find( 'option:first' ).prop( 'selected', true );
+			$fields_dropdown.trigger( 'gfef-change' );
+
 			if ( reload_only ) {
 				$fields_dropdown.val( $fields_dropdown.attr( 'data-value' ) );
 			}

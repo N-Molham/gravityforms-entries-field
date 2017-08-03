@@ -34,9 +34,8 @@ class GF_Field_Form_Entries extends GF_Field_Select
 
 	public function get_form_editor_field_settings()
 	{
-		return array_merge( array_filter( parent::get_form_editor_field_settings(), function ( $setting_class )
-		{
-			return !in_array( $setting_class, [ 'choices_setting', 'prepopulate_field_setting' ] );
+		return array_merge( array_filter( parent::get_form_editor_field_settings(), function ( $setting_class ) {
+			return ! in_array( $setting_class, [ 'choices_setting', 'prepopulate_field_setting' ] );
 		} ), [ 'gfef_form_setting', 'gfef_form_field_setting' ] );
 	}
 
@@ -50,7 +49,7 @@ class GF_Field_Form_Entries extends GF_Field_Select
 	public function get_form_entries_choices( $value = '' )
 	{
 		$form_entries = [];
-		if ( !isset( $this->selected_form ) || !isset( $this->selected_field ) )
+		if ( ! isset( $this->selected_form ) || ! isset( $this->selected_field ) )
 		{
 			// no form or field selected!
 			return $form_entries;
@@ -59,11 +58,10 @@ class GF_Field_Form_Entries extends GF_Field_Select
 		// fetch form entries
 		$form_entries = gf_form_entries_field()->backend->get_form_entries( absint( $this->selected_form ) );
 
-		if ( sizeof( $form_entries ) > 0 )
+		if ( count( $form_entries ) > 0 )
 		{
 			$selected_field = GFFormsModel::get_field( GFAPI::get_form( $this->selected_form ), $this->selected_field );
-			$form_entries   = array_map( function ( $entry ) use ( $selected_field, $value )
-			{
+			$form_entries   = array_map( function ( $entry ) use ( $selected_field, $value ) {
 				return [
 					'text'       => $selected_field->get_value_export( $entry ),
 					'value'      => $entry['id'],
@@ -90,18 +88,19 @@ class GF_Field_Form_Entries extends GF_Field_Select
 		$is_entry_detail    = $this->is_entry_detail();
 		$is_form_editor     = $this->is_form_editor();
 		$id                 = $this->id;
-		$field_id           = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
+		$field_id           = $is_entry_detail || $is_form_editor || 0 === $form_id ? "input_$id" : 'input_' . $form_id . "_$id";
 		$logic_event        = $this->get_conditional_logic_event( 'change' );
 		$size               = $this->size;
 		$class_suffix       = $is_entry_detail ? '_admin' : '';
 		$class              = $size . $class_suffix;
-		$css_class          = trim( esc_attr( $class ) . ' gfield_select' );
+		$css_class          = trim( esc_attr( $class ) . ' gfield_select gfield_select-autocomplete' );
 		$tabindex           = $this->get_tabindex();
 		$disabled_text      = $is_form_editor ? 'disabled="disabled"' : '';
 		$required_attribute = $this->isRequired ? 'aria-required="true"' : '';
 		$invalid_attribute  = $this->failed_validation ? 'aria-invalid="true"' : 'aria-invalid="false"';
 
-		return sprintf( "<div class='ginput_container ginput_container_select'><select name='input_%d' id='%s' $logic_event class='%s' $tabindex %s %s %s>%s</select></div>", $id, $field_id, $css_class, $disabled_text, $required_attribute, $invalid_attribute, $this->get_choices( $value ) );
+		return sprintf( "<div class='ginput_container ginput_container_select'>" .
+		                "<select name='input_%d' id='%s' $logic_event class='%s' $tabindex %s %s %s style=\"width: 49.5%%\">%s</select></div>", $id, $field_id, $css_class, $disabled_text, $required_attribute, $invalid_attribute, $this->get_choices( $value ) );
 	}
 
 	public function get_value_entry_list( $value, $entry, $field_id, $columns, $form )
@@ -150,47 +149,21 @@ class GF_Field_Form_Entries extends GF_Field_Select
 	public function validate( $value, $form )
 	{
 		$selected_entry = absint( $value );
-		if ( 0 === $selected_entry )
+		$selected_entry = 0 === $selected_entry ? null : GFAPI::get_entry( $selected_entry );
+		if ( null === $selected_entry || is_wp_error( $selected_entry ) )
 		{
 			// invalid selection
 			$this->failed_validation  = true;
 			$this->validation_message = __( 'Invalid Entry Selection!', GFEF_DOMAIN );
+
+			return;
 		}
 
-		$allowed_entries = array_map( function ( $entry )
-		{
-			return absint( $entry['id'] );
-		}, gf_form_entries_field()->backend->get_form_entries( absint( $this->selected_form ) ) );
-
-		if ( !in_array( $selected_entry, $allowed_entries ) )
+		if ( absint( $this->selected_form ) !== absint( $selected_entry['form_id'] ) )
 		{
 			// invalid selection
 			$this->failed_validation  = true;
-			$this->validation_message = __( 'Selected entry not found!', GFEF_DOMAIN );
+			$this->validation_message = __( 'Unknown Entry Selection!', GFEF_DOMAIN );
 		}
-	}
-
-	public function allow_html()
-	{
-		return false;
-	}
-
-	public function get_form_inline_script_on_page_render( $form )
-	{
-		// vars
-		$form_id         = absint( $form['id'] );
-		$is_entry_detail = $this->is_entry_detail();
-		$is_form_editor  = $this->is_form_editor();
-		$id              = $this->id;
-		$field_id        = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
-
-		// Select2 assets
-		wp_enqueue_style( 'select2-style', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css', null, '4.0.3' );
-		wp_enqueue_script( 'select2-script', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js', [ 'jquery' ], '4.0.3', true );
-
-		$script = parent::get_form_inline_script_on_page_render( $form );
-		$script .= 'jQuery( function( $ ) { $( "#'. $field_id .'" ).select2(); } );';
-
-		return $script;
 	}
 }

@@ -80,21 +80,18 @@ class Backend extends Component
 			return;
 		}
 
-		$forms = array_map( function ( $form )
-		{
+		$forms = array_map( function ( $form ) {
 			// get only wanted information
 			return [
 				'id'     => $form['id'],
 				'title'  => $form['title'],
-				'fields' => array_map( function ( $field )
-				{
+				'fields' => array_map( function ( $field ) {
 					// get only needed form input information
 					return [
 						'id'    => $field->id,
 						'label' => $field->label,
 					];
-				}, array_values( array_filter( $form['fields'], function ( $field )
-				{
+				}, array_values( array_filter( $form['fields'], function ( $field ) {
 					// filter out section items/fields
 					return 'section' !== $field['type'];
 				} ) ) ),

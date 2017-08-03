@@ -1,0 +1,4 @@
+/**
+ * Created by Nabeel on 2017-08-03.
+ */
+!function(a,b,c,d){a(c).on("gform_post_render",function(b,c){a("#gform_"+c).find(".gfield_select-autocomplete").each(function(b,c){a(c).select2({minimumInputLength:3,ajax:{url:gfef_params.ajax_url,dataType:"json",delay:250,data:function(a){return gfef_params.ajax_params.search=a.term,gfef_params.ajax_params.page=a.page,gfef_params.ajax_params.field=c.id,gfef_params.ajax_params},processResults:function(a,b){return b.page=b.page||1,!1===a.success?{results:[],pagination:{more:b.page}}:{results:a.data,pagination:{more:10*b.page<a.data.length}}},cache:!0}})})})}(jQuery,window,document);

@@ -14,7 +14,60 @@ final class Helpers
 	 *
 	 * @var string
 	 */
-	static $text_domain = GFEF_DOMAIN;
+	public static $text_domain = GFEF_DOMAIN;
+
+	/**
+	 * Enqueue path
+	 *
+	 * @var string
+	 */
+	private static $enqueue_path;
+
+	/**
+	 * Enqueue assets version
+	 *
+	 * @var string
+	 */
+	private static $assets_version;
+
+	/**
+	 * Get Assets enqueue base path
+	 *
+	 * @return string
+	 */
+	public static function enqueue_path()
+	{
+		if ( null === self::$enqueue_path )
+		{
+			self::$enqueue_path = sprintf( '%s/assets/%s/', untrailingslashit( GFEF_URI ), self::is_script_debugging() ? 'src' : 'dist' );
+		}
+
+		return self::$enqueue_path;
+	}
+
+	/**
+	 * Get the current assets version
+	 *
+	 * @return string
+	 */
+	public static function assets_version()
+	{
+		if ( null === self::$assets_version )
+		{
+			// assets version file
+			$version_file = GFEF_DIR . 'assets/last_update';
+
+			// read from file
+			self::$assets_version = file_exists( $version_file ) && is_readable( $version_file ) ? sanitize_key( file_get_contents( $version_file ) ) : null;
+			if ( empty( self::$assets_version ) )
+			{
+				// fallback to plugin version
+				self::$assets_version = gfef_version();
+			}
+		}
+
+		return self::$assets_version;
+	}
 
 	/**
 	 * Check if the given URL is valid
@@ -31,7 +84,7 @@ final class Helpers
 			return false;
 		}
 
-		if ( !filter_var( $url, FILTER_VALIDATE_URL ) )
+		if ( ! filter_var( $url, FILTER_VALIDATE_URL ) )
 		{
 			// Must pass validation
 			return false;
@@ -59,7 +112,7 @@ final class Helpers
 	 */
 	public static function is_plugin_active( $plugin_file )
 	{
-		if ( !function_exists( 'is_plugin_active' ) )
+		if ( ! function_exists( 'is_plugin_active' ) )
 		{
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -76,7 +129,7 @@ final class Helpers
 	 */
 	public static function is_plugin_inactive( $plugin_file )
 	{
-		if ( !function_exists( 'is_plugin_inactive' ) )
+		if ( ! function_exists( 'is_plugin_inactive' ) )
 		{
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -189,13 +242,13 @@ final class Helpers
 	 * URL Redirect
 	 *
 	 * @param string $target
-	 * @param number $status
+	 * @param int    $status
 	 *
 	 * @return void
 	 */
 	public static function redirect( $target = '', $status = 302 )
 	{
-		if ( '' == $target && isset( $_REQUEST['_wp_http_referer'] ) )
+		if ( '' === $target && isset( $_REQUEST['_wp_http_referer'] ) )
 		{
 			$target = esc_url( $_REQUEST['_wp_http_referer'] );
 		}
@@ -264,8 +317,7 @@ final class Helpers
 			return '';
 		}
 
-		array_walk( $attrs, function ( &$item, $key )
-		{
+		array_walk( $attrs, function ( &$item, $key ) {
 			$item = $key . '="' . esc_attr( is_array( $item ) ? implode( ' ', $item ) : $item ) . '"';
 		} );
 

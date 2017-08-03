@@ -1,19 +1,22 @@
+// requires
+var filesystem = require( 'fs' );
+
 /**
  * Plugin base arguments
  *
  * @type {Object}
  */
 var plugin_args = {
-	path: './', // plugin directory path
-	domainPath: '/languages', // language files location ( relative to "path" )
+	path       : './', // plugin directory path
+	domainPath : '/languages', // language files location ( relative to "path" )
 	potFilename: 'template.pot', // generated pot file name
-	exclude: [ // excluded files and directory from parsing
+	exclude    : [ // excluded files and directory from parsing
 		'vendor/', // composer libs vendor dir
 		'.git'
 	],
-	mainFile: 'gravityforms-entries-field.php', // plugin main file ( with plugin description comment doc )
-	watchFiles: {
-		assets: [ 'assets/src/css/**/*.css', 'assets/src/js/**/*.js' ],
+	mainFile   : 'gravityforms-entries-field.php', // plugin main file ( with plugin description comment doc )
+	watchFiles : {
+		assets : [ 'assets/src/css/**/*.css', 'assets/src/js/**/*.js' ],
 		potfile: [ './**/*.php' ]
 	}
 };
@@ -24,61 +27,61 @@ var plugin_args = {
 module.exports = function ( grunt ) {
 	// Project configuration.
 	grunt.initConfig( {
-		pkg: grunt.file.readJSON( 'package.json' ),
-		uglify: {
+		pkg    : grunt.file.readJSON( 'package.json' ),
+		uglify : {
 			my_target: {
 				options: {
 					preserveComments: 'some'
 				},
-				files: [ {
+				files  : [ {
 					expand: true,
-					cwd: 'assets/src/js',
-					src: '**/*.js',
-					dest: 'assets/dist/js'
+					cwd   : 'assets/src/js',
+					src   : '**/*.js',
+					dest  : 'assets/dist/js'
 				} ]
 			}
 		},
-		cssmin: {
+		cssmin : {
 			minify: {
 				expand: true,
-				cwd: 'assets/src/css',
-				src: '**/*.css',
-				dest: 'assets/dist/css'
+				cwd   : 'assets/src/css',
+				src   : '**/*.css',
+				dest  : 'assets/dist/css'
 			}
 		},
 		makepot: {
 			target: {
 				options: {
-					cwd: plugin_args.path,
-					domainPath: plugin_args.domainPath,
-					exclude: plugin_args.exclude,
-					mainFile: plugin_args.mainFile,
-					potFilename: plugin_args.potFilename,
-					potHeaders: {
-						poedit: true,
+					cwd            : plugin_args.path,
+					domainPath     : plugin_args.domainPath,
+					exclude        : plugin_args.exclude,
+					mainFile       : plugin_args.mainFile,
+					potFilename    : plugin_args.potFilename,
+					potHeaders     : {
+						poedit                 : true,
 						'x-poedit-keywordslist': true,
-						'Last-Translator': '',
-						'Language-Team': 'Nabeel Molham <n.molham@gmail.com>'
+						'Last-Translator'      : '',
+						'Language-Team'        : 'Nabeel Molham <n.molham@gmail.com>'
 					},
-					type: 'wp-plugin',
+					type           : 'wp-plugin',
 					updateTimestamp: true,
-					updatePoFiles: true
+					updatePoFiles  : true
 				}
 			}
 		},
-		watch: {
+		watch  : {
 			// for localization .pot file
 			potfile: {
 				files: plugin_args.watchFiles.potfile,
 				tasks: [ 'makepot' ]
 			},
 			// for JS & CSS assets
-			assets: {
+			assets : {
 				files: plugin_args.watchFiles.assets,
 				tasks: [ 'uglify', 'cssmin' ]
 			},
 			// for JS & CSS assets
-			all: {
+			all    : {
 				files: plugin_args.watchFiles.potfile.concat( plugin_args.watchFiles.assets ),
 				tasks: [ 'makepot', 'uglify', 'cssmin' ]
 			}
@@ -90,6 +93,18 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
+
+	// when the watch task triggers
+	grunt.event.on( 'watch', function () {
+		// save assets compile date & time
+		filesystem.writeFile( 'assets/last_update', (new Date()).toISOString().replace( /[^0-9]/g, '' ), function ( err ) {
+			if ( err ) {
+				return console.log( err );
+			}
+
+			console.log( "The file was saved!" );
+		} );
+	} );
 
 	// Default task(s).
 	grunt.registerTask( 'default', [ 'watch:all' ] );
